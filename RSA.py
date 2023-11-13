@@ -46,19 +46,27 @@ def descifradoRSA(C, p, q, e, cantidad_caracteres, cantidad_codigo):
     # e*d ≡ 1 (mod phi) → d*e + phi*k = 1
     mcd, d, k = algoritmoEuclidesExtendido(e, phi)
     
-    codigo_descencriptado = dameVectorOperado(mensaje, d, n, cantidad_codigo) # obtener el vector de codigo encriptado (con calculos)
-    codigo_pares = [numero for cadena in codigo_descencriptado for numero in separarVectorCodigo(cadena, cantidad_caracteres)] # convertir el codigo_descencriptado en pares
-    codigo_completo = [diccionario[i] for i in codigo_pares] # mensaje segun el codigo_pares
-    mensaje_respuesta = ''.join(codigo_completo)
-    
-    
-    print("\033[1m===================================\033[0m")
-    print("\033[1m||Descencriptar con el método RSA||\033[0m")
-    print("\033[1m===================================\033[0m")
-    print("El mensaje ingresado es:",C)
-    print(f"Su llave privada es: {d}")
-    print("El vector codigo descencriptado es:",codigo_pares)
-    print("El mensaje descencriptado es:",mensaje_respuesta)
+    # se encontró una solución
+    if mcd == 1:
+        #asegurar el d en modulo phi
+        while d < 0:
+            d = d + phi
+        
+        codigo_descencriptado = dameVectorOperado(mensaje, d, n, cantidad_codigo) # obtener el vector de codigo encriptado (con calculos)
+        codigo_pares = [numero for cadena in codigo_descencriptado for numero in separarVectorCodigo(cadena, cantidad_caracteres)] # convertir el codigo_descencriptado en pares
+        codigo_completo = [diccionario[i] for i in codigo_pares] # mensaje segun el codigo_pares
+        mensaje_respuesta = ''.join(codigo_completo)
+        
+        
+        print("\033[1m===================================\033[0m")
+        print("\033[1m||Descencriptar con el método RSA||\033[0m")
+        print("\033[1m===================================\033[0m")
+        print("El mensaje ingresado es:",C)
+        print(f"Su llave privada es: {d}")
+        print("El vector codigo descencriptado es:",codigo_pares)
+        print("El mensaje descencriptado es:",mensaje_respuesta)
+    else:
+        print("\033[91mIntenta con otros valores para 'p' y 'q', la ecuación diofántica no tiene solución.\033[0m")        
     
 # Función para agregar un cero a números menores que 10
 def dameFormatoNumero(numero):
