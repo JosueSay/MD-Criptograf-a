@@ -5,42 +5,43 @@ from Operaciones import dameBloques, dameCodigoBloques, dameVectorCodigo
 
 diccionario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" # alfabeto a usar
 modulo = len(diccionario) # modulo segun el alfabeto
-cantidad_caracteres = 2 # cantidad de caracteres por bloque
-cantidad_codigo = cantidad_caracteres*2
-
 
 # Función para pedir datos para el cifrado RSA
 def pedirDatosCifradoRSA():
-    
     mensaje = input ("Ingrese el mensaje 'M': ")
-    valor_p = input ("Ingrese el valor 'p': ")
-    valor_q = input ("Ingrese el valor 'q': ")
-    exponente = input ("Ingrese el exponente 'e': ")
-    
-    cifradoRSA(mensaje, int(valor_p), int(valor_q), int(exponente))
-    
+    valor_e = input ("Ingrese el valor 'e' de la llave pública: ")
+    valor_n = input ("Ingrese el valor 'n' de la llave pública: ")
+    cantidad_caracteres = input ("Ingrese la cantidad de letras por bloque: ")
+    cantidad_codigo = int(cantidad_caracteres)*2
+    cifradoRSA(mensaje, int(valor_e), int(valor_n), int(cantidad_caracteres), cantidad_codigo)
 
-# Función para pedir datos para el descifrado RSA
+# Función para pedir datos para el cifrado RSA
 def pedirDatosDescifradoRSA():
     mensaje = input ("Ingrese el mensaje 'C': ")
-    exponente = input ("Ingrese dato 'e' de la llave pública: ")
-    producto_n = input ("Ingrese dato 'n' de la llave pública: ")
-    descifradoRSA(mensaje, exponente, producto_n)
+    valor_p = input ("Ingrese el valor 'p' del valor de 'n': ")
+    valor_q = input ("Ingrese el valor 'q' del valor de 'n': ")
+    valor_e = input ("Ingrese el valor 'e' de la llave pública: ")
+    cantidad_caracteres = input ("Ingrese la cantidad de letras por bloque: ")
+    cantidad_codigo = int(cantidad_caracteres)*2
+    descifradoRSA(mensaje, int(valor_p), int(valor_q), int(valor_e), int(cantidad_caracteres), cantidad_codigo)
 
 # Función para el crigfrado RSA
-def cifradoRSA(M, p, q, e):
-    n = p*q # modulo a usar
+def cifradoRSA(M, e, n, cantidad_caracteres, cantidad_codigo):
     bloques = dameBloques(M, cantidad_caracteres) # bloques del mensaje M
     
     vector_codigo = dameVectorCodigo(bloques) # vector codigo segun el mensaje con bloques
     vector_codigo_nuevo = [dameFormatoNumero(vector_codigo[i]) + dameFormatoNumero(vector_codigo[i + 1]) for i in range(0, len(vector_codigo), cantidad_caracteres)] # vector codigo con el formato de cantidad de digitos reales
     
-    codigo_encriptado = dameVectorOperado(vector_codigo_nuevo, e, n) # obtener el vector de codigo encriptado (con calculos)
+    codigo_encriptado = dameVectorOperado(vector_codigo_nuevo, e, n, cantidad_codigo) # obtener el vector de codigo encriptado (con calculos)
     mensaje_respuesta = '-'.join(codigo_encriptado) # obtener el mensaje como respuesta de la codificacion
-    print(bloques)
-    print(vector_codigo)
+    
     print("El mensaje encriptado es:",mensaje_respuesta)
 
+def descifradoRSA(C, p, q, e, cantidad_caracteres, cantidad_codigo):
+    mensaje = C.split()
+    n = p*q
+    
+    
 
 # Función para agregar un cero a números menores que 10
 def dameFormatoNumero(numero):
@@ -50,7 +51,7 @@ def dameFormatoNumero(numero):
         return str(numero)
 
 # Función para realizar calculo de cada codigo del vector
-def dameVectorOperado(vector, e, n):
+def dameVectorOperado(vector, e, n, cantidad_codigo):
     _codigo_encriptado = []
     
     for i in vector:
@@ -59,7 +60,6 @@ def dameVectorOperado(vector, e, n):
         _codigo_encriptado.append(valor_formateado)
 
     return _codigo_encriptado
-
 
 # Función para pedir la información
 def pedirInfo():
@@ -82,14 +82,8 @@ def pedirInfo():
     else:
         pedirDatosDescifradoRSA()
 
-cifradoRSA("SENDMONEY", 53, 61, 77)
-    
 
-    
-    
-    
-    
-    
-    
+
+
 
 
