@@ -19,7 +19,7 @@ e2 = 13
 caracteres2 = 2
 digitos2 = caracteres2*2
 
-# Función para el crigfrado RSA
+# Función para el cifrado de mensajes usando RSA
 def cifradoRSA(M, e, n, cantidad_caracteres, cantidad_codigo):
     bloques = dameBloques(M, cantidad_caracteres) # bloques del mensaje M
     
@@ -28,9 +28,16 @@ def cifradoRSA(M, e, n, cantidad_caracteres, cantidad_codigo):
     
     codigo_encriptado = dameVectorOperado(vector_codigo_nuevo, e, n, cantidad_codigo) # obtener el vector de codigo encriptado (con calculos)
     mensaje_respuesta = '-'.join(codigo_encriptado) # obtener el mensaje como respuesta de la codificacion
-    
+    print("\033[1m===============================\033[0m")
+    print("\033[1m||Encriptar con el método RSA||\033[0m")
+    print("\033[1m===============================\033[0m")
+    print("El mensaje ingresado es:",M)
+    print(f"Su llave pública es: ({e}, {n})")
+    print("La separación por bloques es:",bloques)
+    print("El vector codigo es:",vector_codigo_nuevo)
     print("El mensaje encriptado es:",mensaje_respuesta)
 
+# Función para el descifrado de mensajes usando RSA
 def descifradoRSA(C, p, q, e, cantidad_caracteres, cantidad_codigo):
     mensaje = C.split()
     n = p*q
@@ -142,8 +149,12 @@ def dameVectorCodigo(_bloques_mensaje):
 
 
 
+#### PRUEBAS:
+# Cifrado
+cifradoRSA(M, e1, n1, caracteres1, digitos1)
+cifradoRSA("SENDMONEY", 77, 3233, 2,4)
 
-cifradoRSA(mensaje, int(valor_e), int(valor_n), int(cantidad_caracteres), cantidad_codigo)
-descifradoRSA(mensaje, int(valor_p), int(valor_q), int(valor_e), int(cantidad_caracteres), cantidad_codigo)
+# Descifrado
+# descifradoRSA(C, p, q, e2, caracteres2, digitos2)
 
 
