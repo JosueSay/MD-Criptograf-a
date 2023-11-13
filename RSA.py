@@ -28,6 +28,7 @@ def cifradoRSA(M, e, n, cantidad_caracteres, cantidad_codigo):
     
     codigo_encriptado = dameVectorOperado(vector_codigo_nuevo, e, n, cantidad_codigo) # obtener el vector de codigo encriptado (con calculos)
     mensaje_respuesta = '-'.join(codigo_encriptado) # obtener el mensaje como respuesta de la codificacion
+    
     print("\033[1m===============================\033[0m")
     print("\033[1m||Encriptar con el método RSA||\033[0m")
     print("\033[1m===============================\033[0m")
@@ -41,6 +42,23 @@ def cifradoRSA(M, e, n, cantidad_caracteres, cantidad_codigo):
 def descifradoRSA(C, p, q, e, cantidad_caracteres, cantidad_codigo):
     mensaje = C.split()
     n = p*q
+    phi = (p-1)*(q-1)
+    # e*d ≡ 1 (mod phi) → d*e + phi*k = 1
+    mcd, d, k = algoritmoEuclidesExtendido(e, phi)
+    
+    codigo_descencriptado = dameVectorOperado(mensaje, d, n, cantidad_codigo) # obtener el vector de codigo encriptado (con calculos)
+    codigo_pares = [numero for cadena in codigo_descencriptado for numero in separarVectorCodigo(cadena, cantidad_caracteres)] # convertir el codigo_descencriptado en pares
+    codigo_completo = [diccionario[i] for i in codigo_pares] # mensaje segun el codigo_pares
+    mensaje_respuesta = ''.join(codigo_completo)
+    
+    
+    print("\033[1m===================================\033[0m")
+    print("\033[1m||Descencriptar con el método RSA||\033[0m")
+    print("\033[1m===================================\033[0m")
+    print("El mensaje ingresado es:",C)
+    print(f"Su llave privada es: {d}")
+    print("El vector codigo descencriptado es:",codigo_pares)
+    print("El mensaje descencriptado es:",mensaje_respuesta)
     
 # Función para agregar un cero a números menores que 10
 def dameFormatoNumero(numero):
@@ -49,13 +67,23 @@ def dameFormatoNumero(numero):
     else:
         return str(numero)
 
-# Función para realizar calculo de cada codigo del vector
+# Función para realizar el cálculo de exponenciación modular de cada código de un vector de forma recursiva
 def dameVectorOperado(vector, e, n, cantidad_codigo):
     _codigo_encriptado = []
-    
+
+    def exponenciacionModular(b, e, m):
+        if e == 0:
+            return 1
+        elif e % 2 == 0:  # Si e es par
+            temp = exponenciacionModular(b, e // 2, m)
+            return (temp * temp) % m
+        else:  # Si e es impar
+            temp = exponenciacionModular(b, (e - 1) // 2, m)
+            return (b * temp * temp) % m
+
     for i in vector:
-        valor = int(i) ** e % n # operación del método RSA "pareja^e mod (n)"
-        valor_formateado = '{:0{}}'.format(valor, cantidad_codigo) # formatear el valor a un valor de "cantidad_codigo"
+        valor = exponenciacionModular(int(i), e, n)
+        valor_formateado = '{:0{}}'.format(valor, cantidad_codigo)
         _codigo_encriptado.append(valor_formateado)
 
     return _codigo_encriptado
@@ -146,15 +174,25 @@ def dameVectorCodigo(_bloques_mensaje):
             
     return _vector_codigo
 
+# Función para obtener el valor de "d" de la llave privada
+def algoritmoEuclidesExtendido(a, b):
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        mcd, x, y = algoritmoEuclidesExtendido(b, a % b)
+        return (mcd, y, x - (a // b) * y)
 
+# Función para dividir cada cadena en pares de dígitos y convertir a números
+def separarVectorCodigo(cadena, cantidad_caracteres):
+    return [int(cadena[i:i+cantidad_caracteres]) for i in range(0, len(cadena), cantidad_caracteres)]
 
 
 #### PRUEBAS:
 # Cifrado
 cifradoRSA(M, e1, n1, caracteres1, digitos1)
-cifradoRSA("SENDMONEY", 77, 3233, 2,4)
+#cifradoRSA("SENDMONEY", 77, 3233, 2,4)
 
 # Descifrado
-# descifradoRSA(C, p, q, e2, caracteres2, digitos2)
+descifradoRSA(C, p2, q2, e2, caracteres2, digitos2)
 
 
